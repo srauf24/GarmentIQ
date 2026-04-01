@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from app.backend.api.annotations import router as annotations_router
 from app.backend.api.images import router as images_router
 from app.backend.core.config import settings
 
@@ -33,6 +34,7 @@ app.add_middleware(
 
 
 app.include_router(images_router)
+app.include_router(annotations_router)
 
 
 @app.get("/api/health")
