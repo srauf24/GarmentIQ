@@ -4,11 +4,11 @@ import uuid
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Query, UploadFile
-from sqlalchemy import extract, func
+from sqlalchemy import extract, func, or_
 from sqlalchemy.orm import Session
 
 from app.backend.core.config import settings
-from app.backend.models.database import Image, get_db
+from app.backend.models.database import Annotation, Image, get_db
 from app.backend.models.schemas import (
     AnnotationResponse,
     ImageResponse,
@@ -104,10 +104,30 @@ async def list_images(
     if month is not None:
         query = query.filter(extract("month", Image.created_at) == month)
 
-    # Full-text search
+    # Full-text search (images + annotations)
     if q:
         ts_query = func.plainto_tsquery("english", q)
-        query = query.filter(Image.search_vector.op("@@")(ts_query))
+
+        # Subquery: find image_ids where annotation note or tags match
+        annotation_image_ids = (
+            db.query(Annotation.image_id)
+            .filter(
+                or_(
+                    func.to_tsvector("english", Annotation.note).op("@@")(ts_query),
+                    Annotation.tags.any(q),
+                )
+            )
+            .distinct()
+            .subquery()
+        )
+
+        # Image matches if its own search_vector OR any annotation matches
+        query = query.filter(
+            or_(
+                Image.search_vector.op("@@")(ts_query),
+                Image.id.in_(annotation_image_ids),
+            )
+        )
 
     # Count before pagination
     total = query.count()

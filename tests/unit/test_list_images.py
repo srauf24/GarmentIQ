@@ -67,6 +67,12 @@ class FakeQuery:
                 pass
         return FakeQuery(filtered)
 
+    def distinct(self):
+        return self
+
+    def subquery(self):
+        return []
+
     def count(self):
         return len(self._items)
 
