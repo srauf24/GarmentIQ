@@ -11,7 +11,7 @@ from sqlalchemy import (
     Text,
     create_engine,
 )
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import TSVECTOR, UUID
 from sqlalchemy.orm import DeclarativeBase, Session, relationship, sessionmaker
 
 from app.backend.core.config import settings
@@ -54,6 +54,9 @@ class Image(Base):
     location_continent = Column(String(50))
     location_country = Column(String(100))
     location_city = Column(String(100))
+
+    # Full-text search (populated by DB trigger, not by application)
+    search_vector = Column(TSVECTOR)
 
     # Upload metadata
     uploaded_by = Column(String(100))

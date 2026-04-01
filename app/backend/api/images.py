@@ -3,7 +3,8 @@ import os
 import uuid
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, Form, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, Form, HTTPException, Query, UploadFile
+from sqlalchemy import extract, func
 from sqlalchemy.orm import Session
 
 from app.backend.core.config import settings
@@ -12,6 +13,7 @@ from app.backend.models.schemas import (
     AnnotationResponse,
     ImageResponse,
     LocationResponse,
+    PaginatedResponse,
 )
 from app.backend.services.classifier import ClassificationError, classify_image
 
@@ -52,6 +54,75 @@ def _image_to_response(image: Image) -> ImageResponse:
         annotations=[
             AnnotationResponse.model_validate(a) for a in image.annotations
         ],
+    )
+
+
+@router.get("", response_model=PaginatedResponse[ImageResponse])
+async def list_images(
+    garment_type: str | None = Query(None),
+    style: str | None = Query(None),
+    material: str | None = Query(None),
+    pattern: str | None = Query(None),
+    season: str | None = Query(None),
+    occasion: str | None = Query(None),
+    consumer_profile: str | None = Query(None),
+    designer_brand: str | None = Query(None),
+    location_continent: str | None = Query(None),
+    location_country: str | None = Query(None),
+    location_city: str | None = Query(None),
+    year: int | None = Query(None),
+    month: int | None = Query(None),
+    q: str | None = Query(None),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    db: Session = Depends(get_db),
+) -> PaginatedResponse[ImageResponse]:
+    """List images with optional filters, search, and pagination."""
+    query = db.query(Image)
+
+    # Apply attribute filters
+    filter_map = {
+        "garment_type": garment_type,
+        "style": style,
+        "material": material,
+        "pattern": pattern,
+        "season": season,
+        "occasion": occasion,
+        "consumer_profile": consumer_profile,
+        "designer_brand": designer_brand,
+        "location_continent": location_continent,
+        "location_country": location_country,
+        "location_city": location_city,
+    }
+    for col_name, value in filter_map.items():
+        if value is not None:
+            query = query.filter(getattr(Image, col_name) == value)
+
+    # Time filters
+    if year is not None:
+        query = query.filter(extract("year", Image.created_at) == year)
+    if month is not None:
+        query = query.filter(extract("month", Image.created_at) == month)
+
+    # Full-text search
+    if q:
+        ts_query = func.plainto_tsquery("english", q)
+        query = query.filter(Image.search_vector.op("@@")(ts_query))
+
+    # Count before pagination
+    total = query.count()
+
+    # Paginate
+    query = query.order_by(Image.created_at.desc())
+    query = query.offset((page - 1) * page_size).limit(page_size)
+    images = query.all()
+
+    return PaginatedResponse(
+        items=[_image_to_response(img) for img in images],
+        total=total,
+        page=page,
+        page_size=page_size,
+        total_pages=(total + page_size - 1) // page_size if total > 0 else 0,
     )
 
 
