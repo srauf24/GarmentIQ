@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+
+# Environment
+.env
+
+# Uploads
+uploads/
+
+# Eval results (keep summary, ignore raw data)
+eval/results/*.json
+
+# IDE
+.vscode/
+.idea/
+
+# Claude Code
+.claude/
+
+# Vite cache
+.vite/

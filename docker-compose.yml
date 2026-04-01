@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: garmentiq
+      POSTGRES_PASSWORD: garmentiq_dev
+      POSTGRES_DB: garmentiq
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./app/backend/migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U garmentiq"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./app/backend
+    working_dir: /src
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/src
+      - uploads:/src/app/backend/uploads
+    environment:
+      - DATABASE_URL=postgresql://garmentiq:garmentiq_dev@db:5432/garmentiq
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    command: ["uvicorn", "app.backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+  frontend:
+    build: ./app/frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./app/frontend:/app
+      - frontend_node_modules:/app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8000
+
+volumes:
+  pgdata:
+  uploads:
+  frontend_node_modules:
