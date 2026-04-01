@@ -12,7 +12,7 @@ def test_settings_default_values(monkeypatch: pytest.MonkeyPatch) -> None:
 
     s = Settings()
     assert s.anthropic_api_key == ""
-    assert s.database_url == "postgresql://garmentiq:garmentiq_dev@db:5432/garmentiq"
+    assert s.database_url == "postgresql+psycopg://garmentiq:garmentiq_dev@db:5432/garmentiq"
     assert s.upload_dir == "/app/uploads"
     assert s.max_upload_size_mb == 10
     assert s.claude_model == "claude-sonnet-4-20250514"
