@@ -1,0 +1,12 @@
+{
+  "description": "A leather jacket with silver hardware.",
+  "garment_type": "Jacket",
+  "style": "Streetwear",
+  "material": "Leather",
+  "color_palette": ["Black"],
+  "pattern": "Solid",
+  "season": "Fall",
+  "occasion": "Casual Daily",
+  "consumer_profile": "Trend-Forward Teen",
+  "trend_notes": "Classic biker jacket silhouette."
+}

@@ -25,7 +25,7 @@ services:
       - .:/src
       - uploads:/src/app/backend/uploads
     environment:
-      - DATABASE_URL=postgresql://garmentiq:garmentiq_dev@db:5432/garmentiq
+      - DATABASE_URL=postgresql+psycopg://garmentiq:garmentiq_dev@db:5432/garmentiq
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
     depends_on:
       db:
