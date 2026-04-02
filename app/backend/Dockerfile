@@ -11,7 +11,8 @@ ENV PYTHONUNBUFFERED=1
 
 # Install dependencies into /opt/venv (outside /app so bind mounts can't hide it)
 COPY pyproject.toml ./
-RUN uv venv /opt/venv && uv pip install --python /opt/venv/bin/python -r pyproject.toml
+RUN uv venv /opt/venv && uv pip install --python /opt/venv/bin/python -r pyproject.toml && \
+    uv pip install --python /opt/venv/bin/python pytest pytest-asyncio
 
 ENV PATH="/opt/venv/bin:$PATH"
 
