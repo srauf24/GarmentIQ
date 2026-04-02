@@ -4,6 +4,15 @@ AI-powered fashion garment classification and inspiration library. Designers upl
 
 **Stack**: React 18 + TypeScript + Tailwind | FastAPI + Python 3.12 | PostgreSQL 16 | Claude Sonnet (vision) | Docker Compose
 
+### Gallery — filter by garment attributes, location, time; full-text search across descriptions and annotations
+![Gallery view](docs/screenshots/gallery.png)
+
+### Image Detail — AI-generated classification with structured attributes, trend notes, and location context
+![Detail classification](docs/screenshots/detail-classification.png)
+
+### Designer Annotations — add notes and tags, clearly separated from AI output
+![Detail annotations](docs/screenshots/detail-annotations.png)
+
 ## Setup (3 steps)
 
 ```bash
