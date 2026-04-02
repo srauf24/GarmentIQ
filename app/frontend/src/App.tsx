@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 
 import { UploadModal } from "./components/UploadModal";
 import { GalleryPage } from "./pages/GalleryPage";
+import { ImageDetailPage } from "./pages/ImageDetailPage";
 
 export function App() {
   const [uploadOpen, setUploadOpen] = useState(false);
@@ -40,6 +41,7 @@ export function App() {
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<GalleryPage />} />
+          <Route path="/images/:id" element={<ImageDetailPage />} />
         </Routes>
       </main>
 

@@ -13,7 +13,8 @@ export function useDeleteAnnotation() {
   return useMutation<void, Error, DeleteAnnotationVariables>({
     mutationFn: ({ imageId, annotationId }) =>
       deleteAnnotation(imageId, annotationId),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["images", variables.imageId] });
       queryClient.invalidateQueries({ queryKey: ["images"] });
     },
   });

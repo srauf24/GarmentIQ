@@ -39,6 +39,11 @@ export async function fetchImages(
   return handleResponse(res);
 }
 
+export async function fetchImage(id: string): Promise<ImageResponse> {
+  const res = await fetch(`${API_BASE}/api/images/${id}`);
+  return handleResponse(res);
+}
+
 export async function uploadImage(
   file: File,
   uploadedBy?: string,

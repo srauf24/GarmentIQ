@@ -3,6 +3,8 @@ import os
 import uuid
 from pathlib import Path
 
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, Form, HTTPException, Query, UploadFile
 from sqlalchemy import extract, func, or_
 from sqlalchemy.orm import Session
@@ -144,6 +146,18 @@ async def list_images(
         page_size=page_size,
         total_pages=(total + page_size - 1) // page_size if total > 0 else 0,
     )
+
+
+@router.get("/{image_id}", response_model=ImageResponse)
+async def get_image(
+    image_id: UUID,
+    db: Session = Depends(get_db),
+) -> ImageResponse:
+    """Get a single image by ID."""
+    image = db.query(Image).filter(Image.id == image_id).first()
+    if not image:
+        raise HTTPException(404, "Image not found")
+    return _image_to_response(image)
 
 
 @router.post("/upload", response_model=ImageResponse, status_code=201)

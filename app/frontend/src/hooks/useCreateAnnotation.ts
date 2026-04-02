@@ -13,7 +13,8 @@ export function useCreateAnnotation() {
 
   return useMutation<AnnotationResponse, Error, CreateAnnotationVariables>({
     mutationFn: ({ imageId, body }) => createAnnotation(imageId, body),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["images", variables.imageId] });
       queryClient.invalidateQueries({ queryKey: ["images"] });
     },
   });
