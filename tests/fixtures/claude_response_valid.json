@@ -1,0 +1,20 @@
+{
+  "description": "A flowing silk midi dress in deep emerald green with gold embroidery along the neckline.",
+  "garment_type": "Dress",
+  "style": "Bohemian",
+  "material": "Silk",
+  "color_palette": ["Emerald Green", "Gold"],
+  "pattern": "Floral",
+  "season": "Spring",
+  "occasion": "Casual Daily",
+  "consumer_profile": "Young Professional",
+  "designer_brand": null,
+  "trend_notes": "Reflects the midi-length revival trend prominent in 2024-2025 collections.",
+  "location": {
+    "environment": "Urban Street",
+    "inferred_country": "Japan",
+    "inferred_city": "Tokyo",
+    "inferred_continent": "Asia",
+    "confidence": 0.7
+  }
+}
